@@ -44,7 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(cfg => cfg.WithMethods("POST"));
+app.UseCors(cfg => cfg.WithMethods("POST").AllowAnyOrigin().AllowAnyHeader());
 
 app.Use(async (ctx, next) =>
 {
