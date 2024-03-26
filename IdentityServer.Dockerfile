@@ -1,9 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /App
-ENV WEBAPP_PROJECT_DIR=./PedroTer7.FinancialMonkey.IdentityServer
-COPY ./PedroTer7.FinancialMonkey.IdentityServer ${WEBAPP_PROJECT_DIR}
-RUN dotnet restore ${WEBAPP_PROJECT_DIR}
-RUN dotnet publish ${WEBAPP_PROJECT_DIR} -c Release -o out
+COPY ./PedroTer7.FinancialMonkey.IdentityServer ./PedroTer7.FinancialMonkey.IdentityServer
+COPY ./PedroTer7.FinancialMonkey.Common ./PedroTer7.FinancialMonkey.Common
+RUN dotnet restore ./PedroTer7.FinancialMonkey.IdentityServer
+RUN dotnet publish ./PedroTer7.FinancialMonkey.IdentityServer -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
