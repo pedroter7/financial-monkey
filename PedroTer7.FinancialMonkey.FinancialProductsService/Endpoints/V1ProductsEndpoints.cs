@@ -67,11 +67,13 @@ public static partial class V1Endpoints
         return TypedResults.Ok(new FinancialProductOutViewModel(res));
     }
 
-    internal static Task<Results<Ok<FinancialProductOutViewModel>, NotFound>> DeleteProductEndpoint(
+    internal static async Task<Results<Ok<FinancialProductOutViewModel>, NotFound>> DeleteProductEndpoint(
         [FromRoute] string id,
         [FromServices] IFinancialProductsRepository repository
     )
     {
-        throw new NotImplementedException();
+        var result = await repository.Delete(id);
+        if (result is null) return TypedResults.NotFound();
+        return TypedResults.Ok(new FinancialProductOutViewModel(result));
     }
 }

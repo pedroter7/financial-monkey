@@ -158,7 +158,7 @@ public class V1ProductsEndpointsTests
     }
 
     [Fact(DisplayName = "Update product correctly updates a valid product that exists")]
-    public async void Test_UpdateProduct_CorrectlyCreates_AValidProduct_ThatExists()
+    public async void Test_UpdateProduct_CorrectlyUpdates_AValidProduct_ThatExists()
     {
         // Arrange
         var creatingProduct = MockFactory.CreateValidInViewModel();
@@ -215,6 +215,47 @@ public class V1ProductsEndpointsTests
         // Assert
         var viewResult = Assert.IsAssignableFrom<NotFound>(result.Result);
         repositoryMock.Verify(r => r.UpdateProduct(randomId, It.Is<FinancialProduct>(p => p.Name == creatingProduct.Name)), Times.Once);
+        repositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact(DisplayName = "Delete product correctly deletes a product that exists")]
+    public async void Test_DeleteProduct_CorrectlyDeletes_AProduct_ThatExists()
+    {
+        // Arrange
+        var returningDeletedProduct = _fixture.Create<FinancialProduct>();
+        var repositoryMock = _fixture.Freeze<Mock<IFinancialProductsRepository>>();
+        repositoryMock
+            .Setup(r => r.Delete(returningDeletedProduct.Id))
+            .ReturnsAsync(returningDeletedProduct);
+
+        // Act
+        var result = await V1Endpoints.DeleteProductEndpoint(returningDeletedProduct.Id, repositoryMock.Object);
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<Ok<FinancialProductOutViewModel>>(result.Result);
+        Assert.NotNull(viewResult.Value);
+        Assert.Equal(returningDeletedProduct.Id, viewResult.Value.Id);
+        repositoryMock.Verify(r => r.Delete(returningDeletedProduct.Id), Times.Once);
+        repositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact(DisplayName = "Delete product returns not found when product doesnt exist")]
+    public async void Test_DeleteProduct_ReturnsNotFound_WhenProduct_DoesntExist()
+    {
+        // Arrange
+        var randomId = _fixture.Create<string>();
+        var repositoryMock = _fixture.Freeze<Mock<IFinancialProductsRepository>>();
+        repositoryMock
+            .Setup(r => r.Delete(It.IsAny<string>()))
+            .ReturnsAsync((FinancialProduct?)null);
+        var validator = new FinancialProductInViewModelValidator();
+
+        // Act
+        var result = await V1Endpoints.DeleteProductEndpoint(randomId, repositoryMock.Object);
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<NotFound>(result.Result);
+        repositoryMock.Verify(r => r.Delete(randomId), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
     }
 }

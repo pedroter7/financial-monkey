@@ -15,5 +15,5 @@ public interface IFinancialProductsRepository
     Task<FinancialProduct?> GetProduct(string id);
     Task<FinancialProduct> CreateProduct(FinancialProduct product);
     Task<FinancialProduct?> UpdateProduct(string id, FinancialProduct product);
-    Task<FinancialProduct> Delete(string id);
+    Task<FinancialProduct?> Delete(string id);
 }
