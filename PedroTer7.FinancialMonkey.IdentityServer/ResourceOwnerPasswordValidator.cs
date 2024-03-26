@@ -1,4 +1,5 @@
-﻿using Duende.IdentityServer.Models;
+﻿using System.Security.Claims;
+using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Validation;
 using Microsoft.EntityFrameworkCore;
 using PedroTer7.FinancialMonkey.IdentityServer.Contexts;
@@ -60,7 +61,7 @@ public class ResourceOwnerPasswordValidator(CredentialsContext credentialsContex
         var adm = await GetCredentialAsync(email, _credentialsContext.Admins.AsQueryable()) as Admin
             ?? throw new ArgumentException($"Could not find admin with email {email}", nameof(email));
 
-        return new GrantValidationResult(adm.Id.ToString(), "password");
+        return BuildGrantValidationResult(adm);
     }
 
     private async Task<GrantValidationResult> BuildCustomerGrantValidationResult(string email)
@@ -68,8 +69,11 @@ public class ResourceOwnerPasswordValidator(CredentialsContext credentialsContex
         var customer = await GetCredentialAsync(email, _credentialsContext.Customers.AsQueryable()) as Customer
             ?? throw new ArgumentException($"Could not find customer with email {email}", nameof(email));
 
-        return new GrantValidationResult(customer.Id.ToString(), "password");
+        return BuildGrantValidationResult(customer);
     }
+
+    private static GrantValidationResult BuildGrantValidationResult(BaseUserCredential credential)
+        => new(credential.Id.ToString(), "password", claims: [new("uid", credential.Id.ToString())]);
 
     private Task<bool> AuthenticateAdminAsync(string email, string password)
     {

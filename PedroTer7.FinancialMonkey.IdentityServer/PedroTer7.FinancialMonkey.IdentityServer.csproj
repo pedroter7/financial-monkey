@@ -16,4 +16,8 @@
 
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\PedroTer7.FinancialMonkey.Common\PedroTer7.FinancialMonkey.Common.csproj" />
+	</ItemGroup>
 </Project>

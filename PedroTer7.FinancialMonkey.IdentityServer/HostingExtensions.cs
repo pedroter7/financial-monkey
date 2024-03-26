@@ -18,7 +18,6 @@ internal static class HostingExtensions
         });
 
         builder.Services.AddIdentityServer()
-            .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddClientStore<ClientStore>()
             .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()

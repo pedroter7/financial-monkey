@@ -17,7 +17,7 @@ public static class V1Endpoints
             .WithOpenApi();
 
         routeGroup
-            .MapPost("/auth", CustomerAuth)
+            .MapPost("/customer/auth", CustomerAuth)
             .WithOpenApi();
     }
 

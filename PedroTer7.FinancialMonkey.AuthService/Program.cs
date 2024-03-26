@@ -4,8 +4,16 @@ using System.Text.Json;
 using FluentValidation;
 using PedroTer7.FinancialMonkey.AuthService.ViewModels;
 using PedroTer7.FinancialMonkey.AuthService.Services;
+using Serilog;
+using PedroTer7.FinancialMonkey.Common;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.ConfigureSerilog();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,29 +45,10 @@ builder.Services.AddValidatorsFromAssemblyContaining<AuthViewModel>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseCors(cfg => cfg.WithMethods("POST").AllowAnyOrigin().AllowAnyHeader());
-
-app.Use(async (ctx, next) =>
-{
-    try
-    {
-        await next(ctx);
-    }
-    catch (UnauthorizedAccessException)
-    {
-        ctx.Response.Clear();
-        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        return;
-    }
-});
-
+app.UseFinancialMonkeyExceptionHandlingMiddleware();
 V1Endpoints.Map(app);
 
 app.Run();
