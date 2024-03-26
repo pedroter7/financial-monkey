@@ -8,5 +8,5 @@ RUN dotnet publish ${WEBAPP_PROJECT_DIR} -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
 COPY --from=build /App/out .
-ENV IdentityServer__BaseUrl=""
+ENV CUSTOMCONNSTR_MongoDb=""
 ENTRYPOINT ["dotnet", "PedroTer7.FinancialMonkey.FinancialProductsService.dll"]

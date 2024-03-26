@@ -8,7 +8,7 @@ using PedroTer7.FinancialMonkey.FinancialProductsService.Entities;
 using PedroTer7.FinancialMonkey.FinancialProductsService.Repository;
 using PedroTer7.FinancialMonkey.FinancialProductsService.ViewModels;
 
-namespace PedroTer7.FinancialMonkey.FinancialProductsService.Tests;
+namespace PedroTer7.FinancialMonkey.FinancialProductsService.Tests.Endpoints;
 
 public class V1ProductsEndpointsTests
 {

@@ -9,7 +9,8 @@ public class FinancialProductInViewModelValidator : AbstractValidator<FinancialP
     {
         RuleFor(p => p.ProductType)
             .NotEmpty()
-            .IsEnumName(typeof(FinancialProductType), false);
+            .IsEnumName(typeof(FinancialProductType), true)
+            .WithMessage($"{{PropertyName}} must be one of: {Enum.GetNames(typeof(FinancialProductType)).Aggregate((a, s) => a + " " + s)}");
 
         RuleFor(p => p.Name)
             .NotEmpty()
@@ -17,7 +18,8 @@ public class FinancialProductInViewModelValidator : AbstractValidator<FinancialP
 
         RuleFor(p => p.Currency)
             .NotNull()
-            .IsEnumName(typeof(Currency), true);
+            .IsEnumName(typeof(Currency), true)
+            .WithMessage($"{{PropertyName}} must be one of: {Enum.GetNames(typeof(Currency)).Aggregate((a, s) => a + " " + s)}");
 
         RuleFor(p => p.ExpirationDate)
             .GreaterThan(p => p.OpenDate)

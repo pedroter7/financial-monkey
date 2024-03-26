@@ -15,11 +15,13 @@ public static partial class V1Endpoints
         [FromQuery] uint pageSize = 10
     )
     {
+        if (pageSize > 100) pageSize = 100;
         var res = await repository.GetProductsPage(nextId, pageSize);
         return TypedResults.Ok(new PaginatedViewModel<IEnumerable<FinancialProductOutViewModel>>()
         {
             Value = res.Item1.Select(p => new FinancialProductOutViewModel(p)),
-            NextId = res.Item2
+            NextId = res.Item2,
+            PageSize = pageSize
         });
     }
 
