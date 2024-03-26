@@ -49,17 +49,27 @@ public static partial class V1Endpoints
         return TypedResults.Created($"/products/{res.Id}", new FinancialProductOutViewModel(res));
     }
 
-    internal static Task<Results<Ok<FinancialProductOutViewModel>, BadRequest>> UpdateProductEndpoint(
+    internal async static Task<Results<Ok<FinancialProductOutViewModel>, ValidationProblem, NotFound>> UpdateProductEndpoint(
         [FromBody] FinancialProductInViewModel model,
         [FromRoute] string id,
-        [FromServices] FinancialProductInViewModelValidator validator
+        [FromServices] FinancialProductInViewModelValidator validator,
+        [FromServices] IFinancialProductsRepository repository
     )
     {
-        throw new NotImplementedException();
+        var validationResult = validator.Validate(model);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        var res = await repository.UpdateProduct(id, new FinancialProduct(model));
+        if (res is null) return TypedResults.NotFound();
+        return TypedResults.Ok(new FinancialProductOutViewModel(res));
     }
 
     internal static Task<Results<Ok<FinancialProductOutViewModel>, NotFound>> DeleteProductEndpoint(
-        [FromRoute] string id
+        [FromRoute] string id,
+        [FromServices] IFinancialProductsRepository repository
     )
     {
         throw new NotImplementedException();

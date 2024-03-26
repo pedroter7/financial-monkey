@@ -134,7 +134,7 @@ public class V1ProductsEndpointsTests
         // Assert
         var viewResult = Assert.IsAssignableFrom<Created<FinancialProductOutViewModel>>(result.Result);
         Assert.NotNull(viewResult.Value);
-        Assert.Equal(returningCreatedProduct.Name, viewResult.Value.Name);
+        Assert.Equal(returningCreatedProduct.Id, viewResult.Value.Id);
         Assert.Equal($"/products/{returningCreatedProduct.Id}", viewResult.Location);
         repositoryMock.Verify(r => r.CreateProduct(It.Is<FinancialProduct>(p => p.Name == creatingProduct.Name)), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
@@ -154,6 +154,67 @@ public class V1ProductsEndpointsTests
         // Assert
         Assert.IsAssignableFrom<ValidationProblem>(result.Result);
         repositoryMock.Verify(r => r.CreateProduct(It.IsAny<FinancialProduct>()), Times.Never);
+        repositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact(DisplayName = "Update product correctly updates a valid product that exists")]
+    public async void Test_UpdateProduct_CorrectlyCreates_AValidProduct_ThatExists()
+    {
+        // Arrange
+        var creatingProduct = MockFactory.CreateValidInViewModel();
+        var returningCreatedProduct = _fixture.Create<FinancialProduct>();
+        var repositoryMock = _fixture.Freeze<Mock<IFinancialProductsRepository>>();
+        repositoryMock
+            .Setup(r => r.UpdateProduct(returningCreatedProduct.Id, It.Is<FinancialProduct>(p => p.Name == creatingProduct.Name)))
+            .ReturnsAsync(returningCreatedProduct);
+        var validator = new FinancialProductInViewModelValidator();
+
+        // Act
+        var result = await V1Endpoints.UpdateProductEndpoint(creatingProduct, returningCreatedProduct.Id, validator, repositoryMock.Object);
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<Ok<FinancialProductOutViewModel>>(result.Result);
+        Assert.NotNull(viewResult.Value);
+        Assert.Equal(returningCreatedProduct.Id, viewResult.Value.Id);
+        repositoryMock.Verify(r => r.UpdateProduct(returningCreatedProduct.Id, It.Is<FinancialProduct>(p => p.Name == creatingProduct.Name)), Times.Once);
+        repositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact(DisplayName = "Update product returns validation problems when the product is invalid")]
+    public async void Test_UpdateProduct_ReturnsBadRequest_WhenProductIsInvalid()
+    {
+        // Arrange
+        var creatingProduct = MockFactory.CreateInvalidInViewModel();
+        var repositoryMock = _fixture.Create<Mock<IFinancialProductsRepository>>();
+        var validator = new FinancialProductInViewModelValidator();
+
+        // Act
+        var result = await V1Endpoints.UpdateProductEndpoint(creatingProduct, _fixture.Create<string>(), validator, repositoryMock.Object);
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<ValidationProblem>(result.Result);
+        repositoryMock.Verify(r => r.UpdateProduct(It.IsAny<string>(), It.IsAny<FinancialProduct>()), Times.Never);
+        repositoryMock.VerifyNoOtherCalls();
+    }
+
+    [Fact(DisplayName = "Update product returns not found with valid product that does not exists")]
+    public async void Test_UpdateProduct_ReturnsNotFound_WithAValidProduct_ThatDoesntExist()
+    {
+        // Arrange
+        var creatingProduct = MockFactory.CreateValidInViewModel();
+        var randomId = _fixture.Create<string>();
+        var repositoryMock = _fixture.Freeze<Mock<IFinancialProductsRepository>>();
+        repositoryMock
+            .Setup(r => r.UpdateProduct(It.IsAny<string>(), It.IsAny<FinancialProduct>()))
+            .ReturnsAsync((FinancialProduct?)null);
+        var validator = new FinancialProductInViewModelValidator();
+
+        // Act
+        var result = await V1Endpoints.UpdateProductEndpoint(creatingProduct, randomId, validator, repositoryMock.Object);
+
+        // Assert
+        var viewResult = Assert.IsAssignableFrom<NotFound>(result.Result);
+        repositoryMock.Verify(r => r.UpdateProduct(randomId, It.Is<FinancialProduct>(p => p.Name == creatingProduct.Name)), Times.Once);
         repositoryMock.VerifyNoOtherCalls();
     }
 }

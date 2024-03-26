@@ -14,6 +14,6 @@ public interface IFinancialProductsRepository
     Task<Tuple<ICollection<FinancialProduct>, string?>> GetProductsPage(string? firstId, uint pageSize);
     Task<FinancialProduct?> GetProduct(string id);
     Task<FinancialProduct> CreateProduct(FinancialProduct product);
-    Task<FinancialProduct> UpdateProduct(string id, FinancialProduct product);
+    Task<FinancialProduct?> UpdateProduct(string id, FinancialProduct product);
     Task<FinancialProduct> Delete(string id);
 }
