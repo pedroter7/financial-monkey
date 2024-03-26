@@ -17,7 +17,6 @@ builder.ConfigureSerilog();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddCors();
 
 builder.Services
@@ -33,9 +32,7 @@ builder.Services
     .ValidateOnStart();
 
 builder.Services.AddHttpClient();
-
 builder.Services.AddScoped<ITokenService, TokenService>();
-
 builder.Services.ConfigureHttpJsonOptions(opts =>
 {
     opts.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;

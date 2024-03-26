@@ -1,5 +1,7 @@
+using FluentValidation;
 using PedroTer7.FinancialMonkey.Common;
 using PedroTer7.FinancialMonkey.FinancialProductsService.Endpoints;
+using PedroTer7.FinancialMonkey.FinancialProductsService.ViewModels;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -12,6 +14,7 @@ builder.ConfigureSerilog();
 builder.Services.AddCors();
 builder.Services.AddFinancialMonkeySwagger();
 builder.Services.AddFinancialMonkeyAuthentication();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(FinancialProductInViewModel));
 
 var app = builder.Build();
 

@@ -20,7 +20,7 @@ public static partial class V1Endpoints
             .RequireAuthorization(AuthConfig.CustomerAuthPolicy);
 
         routes.MapGet("/products", GetProductsEndpoint);
-        routes.MapGet("/products/{id}", ([FromRoute] string id) => "Ok, Customer");
+        routes.MapGet("/products/{id}", GetProductEndpoint);
     }
 
     private static void MapAdminRoutes(RouteGroupBuilder v1RouteGroup)
@@ -30,9 +30,9 @@ public static partial class V1Endpoints
             .RequireAuthorization(AuthConfig.AdminAuthPolicy);
 
         routes.MapGet("/products", GetProductsEndpoint);
-        routes.MapGet("/products/{id}", ([FromRoute] string id) => "Ok, admin");
-        routes.MapPost("/products", ([FromBody] FinancialProductInViewModel product) => "Ok, admin");
-        routes.MapPut("/products/{id}", ([FromRoute] string id, [FromBody] FinancialProductInViewModel product) => $"Ok, {id}, {product}");
-        routes.MapDelete("/products/{id}", ([FromRoute] string id) => $"Ok, {id}");
+        routes.MapGet("/products/{id}", GetProductEndpoint);
+        routes.MapPost("/products", CreateProductEndpoint);
+        routes.MapPut("/products/{id}", UpdateProductEndpoint);
+        routes.MapDelete("/products/{id}", DeleteProductEndpoint);
     }
 }
