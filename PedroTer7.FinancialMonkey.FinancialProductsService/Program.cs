@@ -23,8 +23,7 @@ builder.Services.AddScoped<IFinancialProductsRepository, FinancialProductsReposi
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseFinancialMonkeySwagger();
 app.UseCors(opts => opts.AllowAnyOrigin().AllowAnyHeader().WithMethods("GET", "POST", "PUT", "DELETE"));
 app.UseAuthentication();
 app.UseAuthorization();

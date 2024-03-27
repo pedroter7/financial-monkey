@@ -1,0 +1,22 @@
+_format_version: "3.0"
+_transform: true
+
+services:
+- host: localhost
+  name: auth_service
+  port: 9903
+  protocol: http
+  routes:
+  - name: auth_root
+    paths:
+    - /auth
+    strip_path: true
+- host: localhost
+  name: financialproducts_service
+  port: 9905
+  protocol: http
+  routes:
+    - name: fproducts_root
+      paths:
+      - /financialproducts
+      strip_path: true

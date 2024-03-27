@@ -31,4 +31,14 @@ public static class WebApplicationExtensions
 
         return app;
     }
+
+    public static WebApplication UseFinancialMonkeySwagger(this WebApplication app)
+    {
+        app.UseSwagger(c =>
+        {
+            c.ConfigureServers();
+        });
+        app.UseSwaggerUI();
+        return app;
+    }
 }

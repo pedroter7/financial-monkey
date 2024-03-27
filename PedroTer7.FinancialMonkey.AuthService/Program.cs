@@ -42,8 +42,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<AuthViewModel>();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+app.UseFinancialMonkeySwagger();
 app.UseCors(cfg => cfg.WithMethods("POST").AllowAnyOrigin().AllowAnyHeader());
 app.UseFinancialMonkeyExceptionHandlingMiddleware();
 V1Endpoints.Map(app);

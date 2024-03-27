@@ -9,7 +9,7 @@ services:
     network_mode: "host"
 
   dbmigrations:
-    image: financialmonkey:latest
+    image: pedroter7/financial-monkey-migrations:latest
     depends_on:
       - mariadb
     network_mode: "host"
@@ -26,8 +26,6 @@ services:
     environment:
       CUSTOMCONNSTR_IdentityServer: Server=localhost;Port=9900;Database=financial_monkey_idserver;Pwd=pwd;Uid=root
       ASPNETCORE_HTTP_PORTS: 9902
-    ports:
-      - "8080:8080"
 
   authservice:
     image: pedroter7/financial-monkey-authservice:latest
@@ -56,3 +54,15 @@ services:
       AUTH_AUTHORITY: http://localhost:9902
       ASPNETCORE_HTTP_PORTS: 9905
       CUSTOMCONNSTR_MongoDb: mongodb://mongoadmin:pwd@localhost:9904/
+
+  apigateway:
+    image: kong/kong-gateway:latest
+    depends_on:
+      - authservice
+      - financialproductsservice
+    network_mode: "host"
+    environment:
+      KONG_DATABASE: off
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yaml
+    volumes:
+      - "./kong.yaml:/kong/declarative/kong.yaml"
