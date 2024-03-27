@@ -16,20 +16,33 @@ Internet traffic reaches an API Gateway or reverse proxy as a common entrypoint.
 
 ## Running
 
-The project is not finished yet, the docker-compose version is on its way.
+There is a [docker compose file](./docker-compose.yaml) ready to be used. All that is needed is to run it from the repository root so that config files are correctly mounted inside the containers that need them.
 
-### Running locally
+The compose file spins up the needed containers for:
 
-Requirements:
+- MariaDB server;
+- MongoDB server;
+- IdentityServer;
+- AuthService;
+- FinancialProductsService;
+- Database migrations (it executes the needed migrations then exits);
+- Kong API Gateway;
 
-- .NET 8 SDK and dotnet-ef;
-- A MariaDb instance;
-- A MongoDb instance;
+It runs in network host mode, that is needed so that it is possible to use IdentityServer without HTTPS (believe me, configuring linux to trust .NET certs is a pain in the ass). Due to that some ports are needed in the host machine:
 
-The versioned appsettings are configured for the following configuration (the network ports must be free in the host machine):
+- 9900 for MariaDB server;
+- 9901 for the migrations container;
+- 9902 for IdentityServer;
+- 9903 for AuthService;
+- 9904 for MongoDB server;
+- 9905 for FinancialProductsService;
+- some ports in the range 8000 to 8444 for Kong API Gateway;
 
-- IdentityServer runnin on port 50001;
-- AuthService running on port 5096;
-- FinancialProductsService running on port 5196;
-- MariaDb running on port 33306 with user root and password pwd and a database named financial_monkey_idserver;
-- MongoDb running on port 9017 with root user mongoadmin and password pwd;
+Once everything is up, one can access the API gateway in http://localhost:8000. Each service has its own swagger UI endpoint that is accessible from the API Gateway:
+
+- /auth/swagger for the AuthService swagger;
+- /financialproducts/swagger for the FinancialProductsService swagger;
+
+## Disclaimer
+
+This is not a real product, it is just a silly project that is not supposed to run in production.
