@@ -43,7 +43,7 @@ jobs:
         with:
           file: 'IdentityServer.Dockerfile'
           push: true
-          tags: pedroter7/financial-monkey-identityserver-migrations:latest
+          tags: pedroter7/financial-monkey-identityserver:latest
   publish_financialproductsservice_image:
     name: Publish FinancialProductService image
     runs-on: ubuntu-latest
