@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: pwd
+      MYSQL_TCP_PORT: 9900
+    network_mode: "host"
+
+  dbmigrations:
+    image: financialmonkey:latest
+    depends_on:
+      - mariadb
+    network_mode: "host"
+    environment:
+      CUSTOMCONNSTR_IdentityServer: Server=localhost;Port=9900;Database=financial_monkey_idserver;Pwd=pwd;Uid=root
+      ASPNETCORE_HTTP_PORTS: 9901
+
+  identityserver:
+    image: pedroter7/financial-monkey-identityserver:latest
+    depends_on:
+      dbmigrations:
+        condition: service_completed_successfully
+    network_mode: "host"
+    environment:
+      CUSTOMCONNSTR_IdentityServer: Server=localhost;Port=9900;Database=financial_monkey_idserver;Pwd=pwd;Uid=root
+      ASPNETCORE_HTTP_PORTS: 9902
+    ports:
+      - "8080:8080"
+
+  authservice:
+    image: pedroter7/financial-monkey-authservice:latest
+    depends_on:
+      - identityserver
+    network_mode: "host"
+    environment:
+      IdentityServer__BaseUrl: http://localhost:9902
+      ASPNETCORE_HTTP_PORTS: 9903
+
+  mongodb:
+    image: mongo:7
+    network_mode: "host"
+    command: mongod --port 9904
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: pwd
+
+  financialproductsservice:
+    image: pedroter7/financial-monkey-financialproductsservice:latest
+    depends_on:
+      - identityserver
+      - mongodb
+    network_mode: "host"
+    environment:
+      AUTH_AUTHORITY: http://localhost:9902
+      ASPNETCORE_HTTP_PORTS: 9905
+      CUSTOMCONNSTR_MongoDb: mongodb://mongoadmin:pwd@localhost:9904/

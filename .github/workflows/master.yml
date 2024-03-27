@@ -60,4 +60,20 @@ jobs:
           file: 'FinancialProductsService.Dockerfile'
           push: true
           tags: pedroter7/financial-monkey-financialproductsservice:latest
+  publish_migrations_image:
+    name: Publish migrations image
+    runs-on: ubuntu-latest
+    needs: [financial-products-service-tests]
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v3.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build and publish to DockerHub
+        uses: docker/build-push-action@v5.1.0
+        with:
+          file: 'Migrations.Dockerfile'
+          push: true
+          tags: pedroter7/financial-monkey-migrations:latest
   

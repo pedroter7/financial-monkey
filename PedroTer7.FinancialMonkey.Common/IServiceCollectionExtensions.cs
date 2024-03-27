@@ -40,7 +40,7 @@ public static class IServiceCollectionExtensions
         var securityScheme = new OpenApiSecurityScheme()
         {
             Name = "Authorization",
-            Type = SecuritySchemeType.ApiKey,
+            Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme,
             BearerFormat = "JWT",
             In = ParameterLocation.Header,

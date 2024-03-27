@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PedroTer7.FinancialMonkey.Common;
-using PedroTer7.FinancialMonkey.FinancialProductsService.ViewModels;
+﻿using PedroTer7.FinancialMonkey.Common;
 
 namespace PedroTer7.FinancialMonkey.FinancialProductsService.Endpoints;
 
@@ -17,7 +15,8 @@ public static partial class V1Endpoints
     {
         var routes = v1RouteGroup
             .MapGroup("/customer")
-            .RequireAuthorization(AuthConfig.CustomerAuthPolicy);
+            .RequireAuthorization(AuthConfig.CustomerAuthPolicy)
+            .WithTags("Customer");
 
         routes.MapGet("/products", GetProductsEndpoint);
         routes.MapGet("/products/{id}", GetProductEndpoint);
@@ -27,7 +26,8 @@ public static partial class V1Endpoints
     {
         var routes = v1RouteGroup
             .MapGroup("/admin")
-            .RequireAuthorization(AuthConfig.AdminAuthPolicy);
+            .RequireAuthorization(AuthConfig.AdminAuthPolicy)
+            .WithTags("Admin");
 
         routes.MapGet("/products", GetProductsEndpoint);
         routes.MapGet("/products/{id}", GetProductEndpoint);
