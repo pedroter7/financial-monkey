@@ -28,7 +28,7 @@ The compose file spins up the needed containers for:
 - Database migrations (it executes the needed migrations then exits);
 - Kong API Gateway;
 
-It runs in network host mode, that is needed so that it is possible to use IdentityServer without HTTPS (believe me, configuring linux to trust .NET certs is a pain in the ass). Due to that some ports are needed in the host machine:
+It runs in network host mode, that is needed so that it is possible to use IdentityServer without HTTPS (believe me, configuring linux to trust .NET certs is painful). Due to that some ports are needed in the host machine:
 
 - 9900 for MariaDB server;
 - 9901 for the migrations container;
@@ -36,12 +36,24 @@ It runs in network host mode, that is needed so that it is possible to use Ident
 - 9903 for AuthService;
 - 9904 for MongoDB server;
 - 9905 for FinancialProductsService;
-- some ports in the range 8000 to 8444 for Kong API Gateway;
+- some ports in the range 8000 to 8444 for Kong API Gateway (only port 8000 is used for the HTTP requests, the rest is allocated by Kong for maintenance and configuration purposes);
 
 Once everything is up, one can access the API gateway in http://localhost:8000. Each service has its own swagger UI endpoint that is accessible from the API Gateway:
 
 - /auth/swagger for the AuthService swagger;
 - /financialproducts/swagger for the FinancialProductsService swagger;
+
+### Credentials
+
+The database migrations project bootstraps some credentials to the database. If one wishes to add more credentials, just add them in the related [EF entity configuration](https://github.com/pedroter7/financial-monkey/tree/master/PedroTer7.FinancialMonkey.IdentityServer/Entities). The default created credentials are:
+
+- Admins:
+  - email: adm1@financialmonkey.com; password: $admin1
+  - email: adm2@financialmonkey.com; password: $admin2
+- Customers:
+  - email: customer_1@gmail.com; password: $customer1
+  - email: customer_2@somecorp.com; password: $customer2
+  - email: customer_3@thirdcopr.com; password: $customer3
 
 ## Disclaimer
 
